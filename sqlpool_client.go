@@ -7,6 +7,11 @@ import (
 )
 
 type MysqlPoolClient struct {
+	Ip   string
+	Port string
+	User string
+	Pwd  string
+	Db   string
 }
 
 var (
@@ -16,15 +21,22 @@ var (
 	err_db   error
 )
 
-func GetInstance() *MysqlPoolClient {
+func GetInstance(ip, port, user, pwd, db string) *MysqlPoolClient {
 	once.Do(func() {
-		instance = &MysqlPoolClient{}
+		instance = &MysqlPoolClient{
+			Ip:   ip,
+			Port: port,
+			User: user,
+			Pwd:  pwd,
+			Db:   db,
+		}
 	})
 	return instance
 }
 
 func (m *MysqlPoolClient) InitPoolClient() (err error) {
-	db, err_db = gorm.Open("mysql", "root:root@tcp(127.0.0.1:3306)/nanili?charset=utf8&parseTime=True&loc=Local")
+	url := m.User + ":" + m.Pwd + "@tcp(" + m.Ip + ":" + m.Port + ")/" + m.Db + "?charset=utf8&parseTime=True&loc=Local"
+	db, err_db = gorm.Open("mysql", url)
 	if err_db != nil {
 		return err_db
 	}
