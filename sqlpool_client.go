@@ -23,12 +23,12 @@ func GetInstance() *MysqlPoolClient {
 	return instance
 }
 
-func (m *MysqlPoolClient) InitPoolClient() (issucc bool) {
+func (m *MysqlPoolClient) InitPoolClient() (issucc bool, err error) {
 	db, err_db = gorm.Open("mysql", "root:root@tcp(127.0.0.1:3306)/nanili?charset=utf8&parseTime=True&loc=Local")
 	if err_db != nil {
-		return false
+		return false, err_db
 	}
-	return true
+	return true, nil
 }
 
 func (m *MysqlPoolClient) GetMysqlPoolClient() (db_con *gorm.DB) {
